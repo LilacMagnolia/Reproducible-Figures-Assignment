@@ -1,0 +1,125 @@
+---
+title: "Reproducible Figures Assignment: Question 2"
+output:
+  html_document: default
+---
+
+### Introduction
+
+In this assignment, I will develop and test hypotheses using the Palmer Penguins dataset from Horst AM et al., 2020^1^, who studied 344 penguins across three islands of the Palmer Archipelago, Antarctica.
+
+<font size="1"> ^1^Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. doi:10.5281/zenodo.3960218, R package version 0.1.0, https://allisonhorst.github.io/palmerpenguins/. </font>
+
+```{r Data Exploration}
+#Load libraries
+library(ggplot2)
+library(palmerpenguins)
+library(janitor)
+library(dplyr)
+library(ggpubr)
+
+head(penguins_raw) #Look at the first 6 row of the penguins_raw data
+
+#Defining functions:
+
+# A function to clean column names
+clean_column_names <- function(penguins_data) {
+  penguins_data %>%
+    clean_names()
+}
+
+# A function to shorten species names
+shorten_species <- function(penguins_data) {
+  penguins_data %>%
+    mutate(species = case_when(
+      species == "Adelie Penguin (Pygoscelis adeliae)" ~ "Adelie",
+      species == "Chinstrap penguin (Pygoscelis antarctica)" ~ "Chinstrap",
+      species == "Gentoo penguin (Pygoscelis papua)" ~ "Gentoo"
+    ))
+}
+
+# A function to remove empty columns or rows
+remove_empty_columns_rows <- function(penguins_data) {
+  penguins_data %>%
+    remove_empty(c("rows", "cols"))
+}
+
+#Cleaning the data
+penguins_clean <- penguins_raw %>%
+    clean_column_names() %>%
+    shorten_species() %>%
+    remove_empty_columns_rows()
+
+head(penguins_clean)
+
+```
+```{r}
+#Exploratory Figure
+exploratory.figure <- ggplot(data = penguins_clean, 
+                             aes(x = body_mass_g, y = flipper_length_mm)) +
+  geom_point()+
+  labs(title = "Figure. 1")+ #plot title
+  theme(plot.title = element_text(hjust = 0.5)) + #title in center
+  theme(text = element_text(family = "Times New Roman", size = 15, color = "#033ca6"), #change font
+        plot.title = element_text(
+          family = "Times New Roman", 
+          size = 17,
+          face = "bold"))+
+  theme(panel.border = element_rect(color= "#3B3A3A", fill = NA), #change color of the panel 
+    panel.background = element_rect(fill = "#fff5e5", color = "#fff5e5"),
+    plot.background = element_rect(fill = "#fff5e5", color = "#fff5e5")
+  )
+
+exploratory.figure #Exploratory figure plotting body_mass_g against flipper_length_mm
+```
+
+Figure. 1 shows an exploratory figure, displaying body mass (g) plotted against flipper length (mm).
+
+### Hypothesis
+
+Null hypothesis: There is no correlation between body mass and flipper length
+
+Alternative hypothesis: There is a correlation between body mass and flipper length
+
+### Statistical Methods
+
+I will use Pearson’s Correlation Coefficient (r) to calculate the linear correlation between body mass and flipper length in penguins.
+
+```{r Statistics}
+
+# Make sure your code prints. 
+results.figure <- ggscatter(penguins_clean, x = "body_mass_g", y = "flipper_length_mm", title = "Figure. 2",
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson", #calculate Pearson’s Correlation Coefficient
+          add.params = list(color = "blue"), #change color of linear regression line
+          xlab = "Body Mass (g)", ylab = "Flipper Length (mm)")+
+  theme(plot.title = element_text(hjust = 0.5)) + #title in center
+  theme(text = element_text(family = "Times New Roman", size = 15, color = "#033ca6"), #change font
+        plot.title = element_text(
+          family = "Times New Roman", 
+          size = 17,
+          face = "bold"))+
+  theme(panel.border = element_rect(color= "#3B3A3A", fill = NA), #change color of the panel 
+    panel.background = element_rect(fill = "#fff5e5", color = "#fff5e5"),
+    plot.background = element_rect(fill = "#fff5e5", color = "#fff5e5")
+  )
+
+
+```
+
+### Results & Discussion
+
+My results show that there is a significant, positive correlation between body mass and flipper length in penguins from the Palmer Archipelago. These results are displayed in Figure. 2, which shows a scatter plot of body mass and flipper length with the linear regression line and 95% confidence interval in blue. The coefficient value (R = 0.87) is greater than 0.5, showing that this association is a strong correlation and the p value is small (p < 2.2e^-16^) suggesting that it's unlikely that this result was due to chance. 
+
+This result is in line with my expectations as greater body mass is likely needed to support greater flipper lengths, and an increase in flipper length contributes to an increase in body mass. Future analyses could compare the strength of this relationship in different species of penguin.
+
+```{r Plotting Results}
+
+results.figure
+
+```
+
+### Conclusion
+
+To conclude, there is a high degree of positive correlation between body mass and flipper length in penguins from the Palmer Archipelago.
+
