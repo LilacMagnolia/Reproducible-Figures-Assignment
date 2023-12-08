@@ -54,6 +54,16 @@ head(penguins_clean)
 
 ```
 ```{r}
+#Create a function for background colours
+background.theme <- function() {
+   theme(panel.border = element_rect(color= "#3B3A3A", fill = NA), #change color of the panel 
+    panel.background = element_rect(fill = "#fff5e5", color = "#fff5e5"),
+    plot.background = element_rect(fill = "#fff5e5", color = "#fff5e5")
+    
+   )
+    
+  }
+
 #Exploratory Figure
 exploratory.figure <- ggplot(data = penguins_clean, 
                              aes(x = body_mass_g, y = flipper_length_mm)) +
@@ -65,10 +75,7 @@ exploratory.figure <- ggplot(data = penguins_clean,
           family = "Times New Roman", 
           size = 17,
           face = "bold"))+
-  theme(panel.border = element_rect(color= "#3B3A3A", fill = NA), #change color of the panel 
-    panel.background = element_rect(fill = "#fff5e5", color = "#fff5e5"),
-    plot.background = element_rect(fill = "#fff5e5", color = "#fff5e5")
-  )
+  background.theme()
 
 exploratory.figure #Exploratory figure plotting body_mass_g against flipper_length_mm
 ```
@@ -99,11 +106,7 @@ results.figure <- ggscatter(penguins_clean, x = "body_mass_g", y = "flipper_leng
           family = "Times New Roman", 
           size = 17,
           face = "bold"))+
-  theme(panel.border = element_rect(color= "#3B3A3A", fill = NA), #change color of the panel 
-    panel.background = element_rect(fill = "#fff5e5", color = "#fff5e5"),
-    plot.background = element_rect(fill = "#fff5e5", color = "#fff5e5")
-  )
-
+  background.theme()
 
 ```
 
